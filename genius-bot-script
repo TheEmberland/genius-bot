@@ -1,0 +1,21 @@
+import requests
+import pandas as pd
+import genius_api_key
+
+print("Welcome to the Top Genius Bot!")
+print("I can show you the 10 most popular song lyrics for an artist on Genius.com")
+search_term = str(input("Which artist would you like to see the top songs for? "))
+client_access_token = genius_api_key.client_access_token
+genius_search_url = "http://api.genius.com/search?q={}&access_token={}".format(search_term, client_access_token)
+
+response = requests.get(genius_search_url)
+json_data = response.json()
+artist_songs = []
+
+
+for song in json_data['response']['hits']:
+    artist_songs.append([song['result']['full_title'], song['result']['stats']['pageviews']])
+
+artist_df = pd.DataFrame(artist_songs)
+artist_df.columns = ['song_title', 'page_views']
+print(artist_df)
